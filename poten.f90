@@ -24,7 +24,7 @@ subroutine accel(m1, m2, m3, h1, h2, h3, r1, r2, r3, a)
     a2(:) = f2(:)/m2
     a3(:) = f3(:)/m3
 
-    a(1:2,2) = a1
+    a(1:2,1) = a1
     a(1:2,2) = a2
     a(1:2,3) = a3
 
@@ -51,6 +51,7 @@ subroutine grav(rr,th,m_1,m_2,h_1,h_2,f1,f2)
     
 end subroutine grav
 
+
 subroutine mag_dir(r_1,r_2,rr,th)
     implicit none
     double precision, dimension(2), intent(in) :: r_1, r_2
@@ -58,8 +59,8 @@ subroutine mag_dir(r_1,r_2,rr,th)
     double precision, dimension(2), intent(out) :: th
     
     rr = sqrt((r_1(1) - r_2(1))**2 + (r_1(2) - r_2(2))**2)
-    th(1) = (r_2(1) - r_1(1))/rr                             !x-component of r vector
-    th(2) = (r_2(2) - r_1(2))/rr                             !y-component of r vector
+    th(1) = (r_2(1) - r_1(1))/rr                             !cos (theta) of r vector
+    th(2) = (r_2(2) - r_1(2))/rr                             !sin (theta) of r vector
 
 end subroutine mag_dir
 
