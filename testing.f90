@@ -7,12 +7,12 @@ program test
     double precision :: g, t_units, r_units, vel_units, m_units, pi
     double precision :: ener_units, spec_ener_units, ang_mom_units
     double precision :: spec_ang_mom_units
-    double precision :: m1, m2, m3, dt, t, h1, h2, h3
-    double precision :: tf, ndump, dtprint
+    double precision :: m1, m2, m3, t, h1, h2, h3
+    double precision :: tf, ndump, dtprint, dt
     double precision :: ekin, epot, etot0
     double precision, dimension(3) ::  M, H
-    double precision, dimension(2,3) :: X,V,A
-    double precision, dimension(2) ::  r1, r2, r3, v1, v2, v3
+    double precision, dimension(2,3) :: X,V,A,A0
+    double precision, dimension(2) ::  r1, r2, r3, v1, v2, v3, X_CoM
     
     integer :: i
     call units(g, t_units, r_units, vel_units, m_units, pi, ener_units, spec_ener_units, &
@@ -21,7 +21,7 @@ program test
     
     
     
-    tf = 407.14
+    tf = 10000
     dt = 0.01
 
     ndump = 0.0
@@ -32,9 +32,9 @@ program test
     m3 = 317.8
 
 
-    h1 = 0.001
-    h2 = 0.001
-    h3 = 0.001
+    h1 = 1
+    h2 = 0.01
+    h3 = 0.1
 
 
     r1(1) = 0.0
@@ -81,6 +81,7 @@ program test
     H(3) = h3
 
     call accel(m1, m2, m3, h1, h2, h3, r1, r2, r3, A)
+    A0 = A
     call pot(m1, m2, m3, h1, h2, h3, X(1:2,1), X(1:2,2), X(1:2,3), epot)
     call kin(M, V, ekin)
     etot0 = epot + ekin
@@ -100,13 +101,14 @@ program test
     
     do while (t<tf)
         if (t>=ndump*dtprint) then
+            call CoM(M, X, X_CoM)
             do i=1,3
-                write(i+664,*) t, X(:,i), V(:,i)
+                write(i+664,*) t, X(:,i)-X_CoM(:), V(:,i)
             enddo
             write(668,*) t,epot, ekin, ekin+epot, abs((ekin+epot - etot0)/etot0)
             call pot(m1, m2, m3, h1, h2, h3, X(1:2,1), X(1:2,2), X(1:2,3), epot)
             call kin(M, V, ekin)
-            print*,t
+            print*, t
             ndump = ndump + 1
         end if
         call leapfrog(M, H, dt, t, X, V, A)
